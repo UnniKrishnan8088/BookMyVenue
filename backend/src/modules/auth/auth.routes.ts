@@ -1,27 +1,13 @@
-import { Router } from "express"
+import { Router } from "express";
+import { AuthController } from "./auth.controller.js";
+import { validateSendOtp, validateVerifyOtp } from "./auth.validation.js";
 
-import { AuthController } from "./auth.controller"
+const router = Router();
 
-import {
-  validateSendOtp,
-  validateVerifyOtp,
-} from "./auth.validation"
+const controller = new AuthController();
 
-const router = Router()
+router.post("/send-otp", validateSendOtp, controller.sendOtp);
 
-const controller =
-  new AuthController()
+router.post("/verify-otp", validateVerifyOtp, controller.verifyOtp);
 
-router.post(
-  "/send-otp",
-  validateSendOtp,
-  controller.sendOtp
-)
-
-router.post(
-  "/verify-otp",
-  validateVerifyOtp,
-  controller.verifyOtp
-)
-
-export default router
+export default router;

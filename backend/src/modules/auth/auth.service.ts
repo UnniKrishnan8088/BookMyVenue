@@ -1,30 +1,35 @@
 import { generateAccessToken, generateRefreshToken } from "../../utils/jwt.js";
 import { sendMail } from "../../utils/mail.js";
 import { generateOTP } from "../../utils/otp.js";
-import { AuthRepository } from "./auth.repository";
+import { AuthRepository } from "./auth.repository.js";
 
 export class AuthService {
   private repository = new AuthRepository();
 
   async sendOtp(email: string) {
-    const otp = generateOTP();
+    try {
+      const otp = generateOTP();
 
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+      const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
-    await this.repository.createOtp(email, otp, expiresAt);
+      await this.repository.createOtp(email, otp, expiresAt);
 
-    await sendMail({
-      to: email,
-      subject: "Login OTP",
-      html: `
+      await sendMail({
+        to: email,
+        subject: "Login OTP",
+        html: `
         <h1>${otp}</h1>
         <p>Valid for 5 minutes</p>
       `,
-    });
+      });
 
-    return {
-      message: "OTP sent successfully",
-    };
+      return {
+        message: "OTP sent successfully",
+      };
+    } catch (error) {
+      console.error("SEND OTP ERROR:", error);
+      throw error;
+    }
   }
 
   async verifyOtp(email: string, otp: string) {
