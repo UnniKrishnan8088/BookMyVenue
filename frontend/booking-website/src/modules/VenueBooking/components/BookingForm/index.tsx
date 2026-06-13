@@ -72,15 +72,15 @@ export default function BookingForm({ selectedSession }: Props) {
   }
 
   return (
-    <div className="rounded-2xl border border-primary p-6">
-      <h3 className="text-center font-semibold uppercase">
+    <div className="mt-4 rounded-2xl border border-primary p-6 md:mt-0">
+      <h3 className="text-center text-sm font-semibold uppercase sm:text-lg">
         Book for {selectedSession?.label}
       </h3>
       <p className="text-center text-xs text-black/60">
         {selectedSession?.time}
       </p>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8">
-        <FieldGroup className="grid grid-cols-2">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="mt-4 sm:mt-8">
+        <FieldGroup className="grid sm:grid-cols-2">
           <Controller
             name="name"
             control={form.control}
@@ -162,7 +162,7 @@ export default function BookingForm({ selectedSession }: Props) {
         <Button
           type="submit"
           disabled={!isValid || isSubmitting}
-          className="mt-10 w-full"
+          className="mt-4 sm:mt-10 w-full"
           size={"lg"}
         >
           Continue

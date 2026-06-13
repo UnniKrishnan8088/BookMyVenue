@@ -14,11 +14,13 @@ export default function Footer({}: Props) {
   return (
     <>
       <footer className="bg-[#333333] py-4">
-        <div className="mx-auto flex items-center justify-between md:max-w-6xl lg:max-w-7xl">
-          <p className="text-base font-bold text-white">List your venue </p>
-          <Button className="p-6 text-sm" size={"lg"}>
-            Conact today!
-          </Button>
+        <div className="hidden sm:block">
+          <div className="app-container flex items-center justify-between">
+            <p className="text-base font-bold text-white">List your venue </p>
+            <Button className="p-6 text-sm" size={"lg"}>
+              Conact today!
+            </Button>
+          </div>
         </div>
         <div className="">
           <div className="mx-2 flex items-center gap-4">
@@ -35,14 +37,14 @@ export default function Footer({}: Props) {
             </div>
             <Separator className="flex-1 bg-white/50" />
           </div>
-          <div className="mt-8 mb-6 flex items-center justify-center gap-4">
-            <Instagram className="size-6 text-white/50" />
-            <XTwitter className="size-6 text-white/50" />
-            <LinkedIn className="size-6 text-white/50" />
-            <YouTube className="size-6 text-white/50" />
-            <Facebook className="size-6 text-white/50" />
+          <div className="app-container mt-4 mb-6 flex items-center justify-center gap-4 md:mt-8">
+            <Instagram className="size-4 text-white/50 sm:size-6" />
+            <XTwitter className="size-4 text-white/50 sm:size-6" />
+            <LinkedIn className="size-4 text-white/50 sm:size-6" />
+            <YouTube className="size-4 text-white/50 sm:size-6" />
+            <Facebook className="size-4 text-white/50 sm:size-6" />
           </div>
-          <div className="pb-10 text-center text-xs text-white/50">
+          <div className="app-container pb-10 text-center text-xs text-white/50">
             <p>© 2025 VenueBook. All rights reserved.</p>
             <p>
               VenueBook Pvt. Ltd. All content, including but not limited to

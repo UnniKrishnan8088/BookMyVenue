@@ -58,38 +58,40 @@ export default function VenueBooking({}: Props) {
 
   const [selectedSession, setSelectedSession] = useState<any>()
   const dates = getDaysOfMonth(Number(selectedMonth), 2026)
-  const currentMonth = getMonth(new Date()) + 1;
+  const currentMonth = getMonth(new Date()) + 1
 
-  const filteredMonths = months.filter((month) => month.value >= currentMonth);
+  const filteredMonths = months.filter((month) => month.value >= currentMonth)
 
   return (
     <>
       <div className="bg-white">
-        <div className="mx-auto md:max-w-6xl lg:max-w-7xl">
-          <div className="flex justify-between py-4">
+        <div className="app-container">
+          <div className="flex flex-col sm:flex-row justify-between py-2 md:py-4">
             <div>
-              <h1 className="text-3xl font-medium">
+              <h1 className="font-medium lg:text-3xl">
                 Grand Harmony Convention Centre
               </h1>
-              <div className="mt-2 flex flex-wrap items-center gap-2">
-                <Badge
-                  variant={"outline"}
-                  className="rounded-2xl bg-white p-4 text-center text-sm font-normal"
-                >
-                  Wedding Hall
-                </Badge>
-                <Badge
-                  variant={"outline"}
-                  className="rounded-2xl bg-white p-4 text-center text-sm font-normal"
-                >
-                  100 - 1200 Guests
-                </Badge>
-                <Badge
-                  variant={"outline"}
-                  className="rounded-2xl bg-white p-4 text-center text-sm font-normal"
-                >
-                  250 Parking Spaces
-                </Badge>
+              <div className="hidden md:block">
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <Badge
+                    variant={"outline"}
+                    className="rounded-2xl bg-white p-4 text-center text-sm font-normal"
+                  >
+                    Wedding Hall
+                  </Badge>
+                  <Badge
+                    variant={"outline"}
+                    className="rounded-2xl bg-white p-4 text-center text-sm font-normal"
+                  >
+                    100 - 1200 Guests
+                  </Badge>
+                  <Badge
+                    variant={"outline"}
+                    className="rounded-2xl bg-white p-4 text-center text-sm font-normal"
+                  >
+                    250 Parking Spaces
+                  </Badge>
+                </div>
               </div>
             </div>
             <div>
@@ -115,7 +117,7 @@ export default function VenueBooking({}: Props) {
         </div>
         <Separator />
         <div className="shadow-2xl">
-          <div className="mx-auto flex scrollbar-thin scrollbar-thumb-gray-300 items-center overflow-x-scroll scroll-smooth md:max-w-6xl lg:max-w-7xl">
+          <div className="app-container flex scrollbar-none md:scrollbar-thin scrollbar-thumb-gray-300 items-center overflow-x-scroll scroll-smooth">
             {dates
               ?.filter((date) => isToday(date) || isFuture(date))
               .map((date) => {
@@ -123,7 +125,7 @@ export default function VenueBooking({}: Props) {
                 return (
                   <div
                     className={cn(
-                      "my-4 rounded-xl px-4 py-2 text-center text-black/60",
+                      "md:my-4 md:rounded-xl px-4 py-2 text-center text-black/60",
                       today && "bg-primary text-white"
                     )}
                   >
@@ -137,7 +139,7 @@ export default function VenueBooking({}: Props) {
               })}
           </div>
         </div>
-        <div className="mx-auto flex items-center justify-end gap-4 py-4 md:max-w-6xl lg:max-w-7xl">
+        <div className="app-container flex items-center justify-end gap-4 py-2 md:py-4">
           <div className="flex items-center gap-2 text-xs text-black/60">
             <div className="size-2 rounded-full bg-green-600"></div>
             <span>Available</span>
@@ -148,16 +150,16 @@ export default function VenueBooking({}: Props) {
           </div>
         </div>
         <Separator />
-        <div className="mx-auto grid grid-cols-2 py-4 md:max-w-6xl lg:max-w-7xl">
+        <div className="app-container grid py-4 lg:grid-cols-2">
           <div>
-            <h3 className="text-xl font-medium">Select Session</h3>
+            <h3 className="text-lg font-medium md:text-xl">Select Session</h3>
 
-            <div className="mt-2 flex items-center gap-2">
+            <div className="mt-2 flex flex-wrap items-center gap-2">
               {sessions?.map((item) => (
                 <Button
                   variant={"outline"}
                   className={cn(
-                    "flex h-auto cursor-pointer flex-col border-black/50 px-4 py-2 text-sm font-normal text-green-500 hover:bg-white hover:text-green-500",
+                    "flex h-auto cursor-pointer flex-col border-black/50 px-4 py-2 text-xs font-normal text-green-500 hover:bg-white hover:text-green-500 md:text-sm",
                     !item?.isAvailable && "text-red-500 hover:text-red-500",
                     item?.label === selectedSession?.label &&
                       "border-2 border-green-500"
@@ -170,7 +172,6 @@ export default function VenueBooking({}: Props) {
                 </Button>
               ))}
             </div>
-            <div></div>
           </div>
           {selectedSession && <BookingForm selectedSession={selectedSession} />}
         </div>
