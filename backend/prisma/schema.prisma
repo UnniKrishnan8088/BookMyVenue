@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  OWNER
+  ADMIN
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+model User {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  password  String
+  name      String
+  role      Role      @default(USER)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  venues    Venue[]   @relation("UserVenues")
+  bookings  Booking[] @relation("UserBookings")
+}
+
+model Venue {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  address     String
+  capacity    Int
+  price       Float
+  ownerId     String
+  owner       User      @relation("UserVenues", fields: [ownerId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  slots       Slot[]
+  bookings    Booking[]
+}
+
+model Slot {
+  id        String    @id @default(uuid())
+  venueId   String
+  venue     Venue     @relation(fields: [venueId], references: [id], onDelete: Cascade)
+  startTime DateTime
+  endTime   DateTime
+  isBooked  Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  bookings  Booking[]
+}
+
+model Booking {
+  id         String        @id @default(uuid())
+  userId     String
+  user       User          @relation("UserBookings", fields: [userId], references: [id])
+  venueId    String
+  venue      Venue         @relation(fields: [venueId], references: [id])
+  slotId     String
+  slot       Slot          @relation(fields: [slotId], references: [id])
+  status     BookingStatus @default(PENDING)
+  totalPrice Float
+  paymentId  String?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+}
