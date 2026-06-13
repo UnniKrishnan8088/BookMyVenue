@@ -59,9 +59,11 @@ export class AuthService {
     const refreshToken = generateRefreshToken(user);
 
     return {
-      user,
-      accessToken,
-      refreshToken,
+      data: {
+        user,
+        accessToken,
+        refreshToken,
+      },
     };
   }
 }

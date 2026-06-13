@@ -2,15 +2,25 @@ import Footer from "@/core/components/Footer"
 import LocationModal from "@/core/components/LocationModal"
 import Navbar from "@/core/components/Navbar"
 import UserDrawer from "@/core/components/UserDrawer"
-import { useState } from "react"
-import { Outlet } from "react-router"
+import { appRoutes } from "@/routes"
+import { useEffect, useState } from "react"
+import { Outlet, useLocation } from "react-router"
 
 type Props = {}
 
 export default function AppLayout({}: Props) {
   const [isLocationOpen, setIsLocationOpen] = useState<boolean>(false)
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)
-  
+  const location = useLocation()
+
+  console.log(location?.pathname)
+
+  useEffect(() => {
+    if (location?.pathname === appRoutes.home) {
+      setIsLocationOpen(true)
+    }
+  }, [location])
+
   return (
     <>
       <Navbar

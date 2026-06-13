@@ -21,6 +21,7 @@ export default function AppRouting({}: Props) {
       <Route element={<AppLayout />}>
         <Route path="/" element={<Navigate to={appRoutes.home} replace />} />
         <Route path={appRoutes.home} element={<Home />} />
+        <Route path={appRoutes.homeWithPlace} element={<Home />} />
         <Route path={appRoutes.venueDetails} element={<VenueDetails />} />
         <Route path={appRoutes.venueList} element={<VenueList />} />
         <Route path={appRoutes.venueBooking} element={<VenueBooking />} />

@@ -64,14 +64,53 @@ const popularCities = [
 ]
 
 export default function LocationModal({ onOpenChange, open }: Props) {
+  const getCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser")
+      return
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords
+
+        console.log("Latitude:", latitude)
+        console.log("Longitude:", longitude)
+
+        // Call your API here if needed
+      },
+      (error) => {
+        console.error(error)
+
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            alert("Location permission denied")
+            break
+          case error.POSITION_UNAVAILABLE:
+            alert("Location information unavailable")
+            break
+          case error.TIMEOUT:
+            alert("Location request timed out")
+            break
+          default:
+            alert("An unknown error occurred")
+        }
+      }
+    )
+  }
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="top-16! w-full max-w-[60%]! translate-y-0! p-0 [&>button]:hidden">
+      <DialogContent
+        onInteractOutside={(e) => e.preventDefault()}
+        onEscapeKeyDown={(e) => e.preventDefault()}
+        className="top-16! w-full max-w-[60%]! translate-y-0! p-0 [&>button]:hidden"
+      >
         <DialogHeader>
           <div className="flex flex-col items-start px-4 pt-4">
             <SearchInput placeholder="Search for your city" />
             <Button
               variant={"link"}
+              onClick={getCurrentLocation}
               className="cursor-pointer hover:no-underline"
             >
               <LocateFixed />

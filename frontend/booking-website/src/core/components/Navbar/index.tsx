@@ -5,6 +5,8 @@ import { ChevronDown, Menu, Search } from "lucide-react"
 import SearchInput from "../SearchInput"
 import { useState } from "react"
 import SignInModal from "@/auth/components/SignInModal"
+import { useAuth } from "@/core/contexts/authContext"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 type Props = {
   onLocationOpen: (open: boolean) => void
@@ -13,6 +15,7 @@ type Props = {
 
 export default function Navbar({ onLocationOpen, onDrawerOpen }: Props) {
   const [isSignIn, setIsSignIn] = useState<boolean>(false)
+  const { user } = useAuth()
   return (
     <>
       <nav className="app-container flex items-center justify-between py-2">
@@ -42,13 +45,29 @@ export default function Navbar({ onLocationOpen, onDrawerOpen }: Props) {
               Kochi
               <ChevronDown />
             </Button>
-            <Button
-              onClick={() => setIsSignIn(true)}
-              className="cursor-pointer"
-              size={"sm"}
-            >
-              Sign In
-            </Button>
+            {user?.id ? (
+              <>
+                <Avatar className="size-7 cursor-pointer">
+                  <AvatarImage
+                    className="h-full w-full"
+                    src="https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png"
+                    alt="avatar"
+                  />
+                  <AvatarFallback>UK</AvatarFallback>
+                </Avatar>
+              </>
+            ) : (
+              <>
+                <Button
+                  onClick={() => setIsSignIn(true)}
+                  className="cursor-pointer"
+                  size={"sm"}
+                >
+                  Sign In
+                </Button>
+              </>
+            )}
+
             <Button
               className="cursor-pointer bg-transparent hover:bg-transparent"
               variant={"ghost"}
@@ -59,7 +78,7 @@ export default function Navbar({ onLocationOpen, onDrawerOpen }: Props) {
             </Button>
           </div>
         </div>
-        <div className="lg:hidden w-full bg-white">
+        <div className="w-full bg-white lg:hidden">
           <div className="flex items-center justify-between">
             <div>
               <Link to={"/"}>

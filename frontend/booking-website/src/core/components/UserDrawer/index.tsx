@@ -25,6 +25,7 @@ import {
   TicketCheck,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useAuth } from "@/core/contexts/authContext"
 
 type Props = {
   open: boolean
@@ -32,6 +33,8 @@ type Props = {
 }
 
 export default function UserDrawer({ onOpenChange, open }: Props) {
+  const { logout } = useAuth()
+
   const drawerMenus = [
     {
       title: "Notifications",
@@ -58,6 +61,11 @@ export default function UserDrawer({ onOpenChange, open }: Props) {
       isEnabled: true,
     },
   ]
+
+  function handleLogout() {
+    logout()
+    onOpenChange(false)
+  }
   return (
     <Drawer onOpenChange={onOpenChange} open={open} direction="right">
       <DrawerContent className="rounded-none!">
@@ -86,6 +94,7 @@ export default function UserDrawer({ onOpenChange, open }: Props) {
         <div className="p-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
           <Button
             variant={"outline"}
+            onClick={handleLogout}
             className="w-full cursor-pointer border border-primary py-6 font-normal text-primary hover:bg-white hover:text-primary"
           >
             Sign Out

@@ -17,7 +17,7 @@ type Props = {
   onOpenChange: (open: boolean) => void
 }
 
-type TScreen = "home" | "email" | "otp"
+export type TScreen = "home" | "email" | "otp"
 
 const MODAL_TITLES: Record<TScreen, string> = {
   home: "Get Started",
@@ -27,10 +27,22 @@ const MODAL_TITLES: Record<TScreen, string> = {
 
 export default function SignInModal({ onOpenChange, open }: Props) {
   const [screen, setScreen] = useState<TScreen>("home")
+  const [email, setEmail] = useState<string>("")
 
   const handleScreen = (type: TScreen) => {
     setScreen(type)
   }
+
+  const handleOtpSended = (value: string) => {
+    setEmail(value)
+    handleScreen("otp")
+  }
+
+  const handleOtpVerified = () => {
+    onOpenChange(false)
+    setScreen("home")
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
@@ -87,9 +99,11 @@ export default function SignInModal({ onOpenChange, open }: Props) {
             </>
           )}
           {screen === "email" && (
-            <EmailForm onSuccess={() => handleScreen("otp")} />
+            <EmailForm onSuccess={(email) => handleOtpSended(email)} />
           )}
-          {screen === "otp" && <OtpForm />}
+          {screen === "otp" && (
+            <OtpForm onSuccess={handleOtpVerified} email={email} />
+          )}
         </div>
       </DialogContent>
     </Dialog>

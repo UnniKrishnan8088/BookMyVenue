@@ -15,8 +15,13 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import useCountdown from "@/core/hooks/useCountdown"
+import api from "@/core/api/api"
+import { useAuth } from "@/core/contexts/authContext"
 
-type Props = {}
+type Props = {
+  onSuccess: () => void
+  email: string
+}
 
 const OTP_LENGTH = 6
 
@@ -31,7 +36,7 @@ const otpFormSchema = z.object({
 
 type OtpFormValues = z.infer<typeof otpFormSchema>
 
-export default function OtpForm({}: Props) {
+export default function OtpForm({ onSuccess, email }: Props) {
   const form = useForm<OtpFormValues>({
     resolver: zodResolver(otpFormSchema),
     defaultValues: { otp: "" },
@@ -39,13 +44,24 @@ export default function OtpForm({}: Props) {
   })
 
   const { timeLeft, isFinished } = useCountdown()
+  const { login } = useAuth()
 
   const {
     formState: { isValid, isSubmitting },
   } = form
 
-  function onSubmit(values: OtpFormValues) {
-    console.log(values)
+  async function onSubmit(values: OtpFormValues) {
+    try {
+      const payload = {
+        email,
+        otp: values?.otp,
+      }
+      const response = await api.post("auth/verify-otp", payload)
+      if (response?.data?.user?.id) {
+        onSuccess()
+        login(response?.data)
+      }
+    } catch (error) {}
   }
 
   return (
@@ -58,8 +74,7 @@ export default function OtpForm({}: Props) {
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor="form-rhf-demo-title">OTP</FieldLabel>
               <FieldDescription>
-                Enter OTP sent to{" "}
-                <span className="font-bold">prasannaunni@gmail.com</span>
+                Enter OTP sent to <span className="font-bold">{email}</span>
               </FieldDescription>
               <InputOTP {...field} maxLength={OTP_LENGTH}>
                 <InputOTPGroup className="flex items-center gap-3 rounded-none">

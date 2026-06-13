@@ -1,5 +1,6 @@
 export const appRoutes = {
-  home: "/explore/home/kochi",
+  home: "/explore/home",
+  homeWithPlace: "/explore/home/kochi",
   venues: "/venues/kochi",
   venueDetails: "/venues/kochi/:id",
   venueList: "/explore/venues/kochi",

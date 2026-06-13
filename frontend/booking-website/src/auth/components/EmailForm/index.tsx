@@ -11,6 +11,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import api from "@/core/api/api"
+import type { TScreen } from "../SignInModal"
 
 const emailFormSchema = z.object({
   email: z
@@ -22,7 +23,7 @@ const emailFormSchema = z.object({
 type EmailFormValues = z.infer<typeof emailFormSchema>
 
 type Props = {
-  onSuccess: () => void
+  onSuccess: (email: string) => void
 }
 
 export default function EmailForm({ onSuccess }: Props) {
@@ -42,7 +43,7 @@ export default function EmailForm({ onSuccess }: Props) {
     try {
       const response = await api.post("auth/send-otp", values)
       if (response?.data?.code === 200) {
-        onSuccess()
+        onSuccess(values?.email)
       }
     } catch (error) {
       console.error(error)
