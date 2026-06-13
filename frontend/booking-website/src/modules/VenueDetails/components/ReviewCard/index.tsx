@@ -20,44 +20,48 @@ export default function ReviewCard({}: Props) {
             <AvatarFallback>G</AvatarFallback>
           </Avatar>
           <div>
-            <p className="text-base">User</p>
-            <p className="-mt-3 text-sm leading-0">
+            <p className="text-sm md:text-base">User</p>
+            <p className="-mt-3 text-xs leading-0 md:text-sm">
               Booked on{" "}
-              <img src={appLogo} alt="app-logo" className="inline w-20" />
+              <img
+                src={appLogo}
+                alt="app-logo"
+                className="inline w-16 md:w-20"
+              />
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Star className="size-5 fill-primary text-primary" />
-          <p className="text-sm">10/10</p>
+        <div className="flex items-center gap-1 md:gap-2">
+          <Star className="size-4 fill-primary text-primary md:size-5" />
+          <p className="text-xs md:text-sm">10/10</p>
         </div>
       </CardHeader>
       <CardContent>
-        <p className="text-sm text-gray-600">
+        <p className="text-xs text-gray-600 md:text-sm">
           "An excellent venue for weddings and receptions. The hall is spacious,
           well-maintained, and comfortably accommodated over 1,000 guests. The
           staff were professional and supportive throughout the event."
         </p>
       </CardContent>
-      <CardFooter className="border-none bg-transparent flex items-center justify-between">
+      <CardFooter className="flex pt-0 items-center justify-between border-none bg-transparent">
         <div>
           <Button
             variant="ghost"
-            className="cursor-pointer hover:bg-transparent"
+            className="cursor-pointer text-xs hover:bg-transparent sm:text-sm"
           >
-            <ThumbsUp />
+            <ThumbsUp className="size-4 sm:size-5" />
             <p>26</p>
           </Button>
           <Button
             variant="ghost"
-            className="cursor-pointer hover:bg-transparent"
+            className="cursor-pointer text-xs hover:bg-transparent sm:text-sm"
           >
-            <ThumbsDown />
+            <ThumbsDown className="size-4 sm:size-5" />
           </Button>
         </div>
         <div className="flex items-center gap-2">
-          <p className="text-sm text-gray-600">1 Day ago</p>
-          <Share2 className="size-5" />
+          <p className="text-xs text-gray-600 md:text-sm">1 Day ago</p>
+          <Share2 className="size-4 sm:size-5" />
         </div>
       </CardFooter>
     </Card>

@@ -7,7 +7,7 @@ export default function VenueMap({}: Props) {
   return (
     <>
       <div>
-        <Card className="h-80 overflow-hidden p-0">
+        <Card className="h-60 md:h-80 overflow-hidden p-0">
           <Map
             styles={{
               dark: "https://tiles.openfreemap.org/styles/bright",

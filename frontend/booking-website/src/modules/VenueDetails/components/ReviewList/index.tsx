@@ -13,7 +13,7 @@ export default function ReviewList({}: Props) {
   return (
     <>
       <div className="mt-10">
-        <h2 className="text-2xl font-medium">Top Reviews</h2>
+        <h2 className="text-xl font-medium xl:text-2xl">Top Reviews</h2>
         <Carousel className="w-full">
           <CarouselContent className="px-1 py-3">
             {Array.from({ length: 10 }).map((_, index) => (
@@ -22,8 +22,8 @@ export default function ReviewList({}: Props) {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious className="ml-8 size-10 cursor-pointer border-none bg-black/50 text-2xl text-white hover:bg-black/50 hover:text-white" />
-          <CarouselNext className="mr-8 size-10 cursor-pointer border-none bg-black/50 text-2xl text-white hover:bg-black/50 hover:text-white" />
+          <CarouselPrevious className="ml-8 hidden md:block size-10 cursor-pointer border-none bg-black/50 text-2xl text-white hover:bg-black/50 hover:text-white" />
+          <CarouselNext className="mr-8 hidden md:block size-10 cursor-pointer border-none bg-black/50 text-2xl text-white hover:bg-black/50 hover:text-white" />
         </Carousel>
       </div>
     </>

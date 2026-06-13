@@ -62,7 +62,7 @@ export default function Banner({}: Props) {
           </div>
         </div>
       </div>
-      <div className="app-container">
+      <div className="app-container md:hidden">
         <div className="h-40 w-full overflow-hidden rounded-xl sm:h-60 md:h-72">
           <img
             src={data?.image}
