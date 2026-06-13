@@ -1,38 +1,27 @@
-import { Router } from "express";
-import { body } from "express-validator";
-import { register, login, getMe } from "./auth.controller.js";
-import { validateRequest } from "../../middleware/validate.js";
-import { protect } from "../../middleware/auth.js";
+import { Router } from "express"
 
-const router = Router();
+import { AuthController } from "./auth.controller"
 
-router.post(
-  "/register",
-  [
-    body("name").trim().notEmpty().withMessage("Name is required"),
-    body("email").trim().isEmail().withMessage("Please provide a valid email"),
-    body("password")
-      .isLength({ min: 6 })
-      .withMessage("Password must be at least 6 characters long"),
-    body("role")
-      .optional()
-      .isIn(["USER", "OWNER", "ADMIN"])
-      .withMessage("Invalid role"),
-    validateRequest,
-  ],
-  register,
-);
+import {
+  validateSendOtp,
+  validateVerifyOtp,
+} from "./auth.validation"
+
+const router = Router()
+
+const controller =
+  new AuthController()
 
 router.post(
-  "/login",
-  [
-    body("email").trim().isEmail().withMessage("Please provide a valid email"),
-    body("password").notEmpty().withMessage("Password is required"),
-    validateRequest,
-  ],
-  login,
-);
+  "/send-otp",
+  validateSendOtp,
+  controller.sendOtp
+)
 
-router.get("/me", protect, getMe);
+router.post(
+  "/verify-otp",
+  validateVerifyOtp,
+  controller.verifyOtp
+)
 
-export default router;
+export default router

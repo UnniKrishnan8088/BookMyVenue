@@ -4,13 +4,22 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "lib": ["ES2022"],
+
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+
     "outDir": "./dist",
     "rootDir": "./src",
-    "resolveJsonModule": true
+
+    "resolveJsonModule": true,
+
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+
+    "ignoreDeprecations": "6.0"
   },
   "include": ["src/**/*"]
 }
