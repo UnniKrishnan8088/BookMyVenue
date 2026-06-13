@@ -1,8 +1,8 @@
 import express from "express";
 import helmet from "helmet";
-import rateLimit from 'express-rate-limit';
-import morgan from 'morgan';
-import cors from 'cors';
+import rateLimit from "express-rate-limit";
+import morgan from "morgan";
+import cors from "cors";
 
 import authRouter from "./modules/auth/auth.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";

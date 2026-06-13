@@ -1,17 +1,17 @@
-import { Request, Response, NextFunction } from 'express';
-import { validationResult } from 'express-validator';
+import { Request, Response, NextFunction } from "express";
+import { validationResult } from "express-validator";
 
 export const validateRequest = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): void => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     res.status(400).json({
-      status: 'error',
+      status: "error",
       statusCode: 400,
-      message: 'Validation failed',
+      message: "Validation failed",
       errors: errors.array(),
     });
     return;

@@ -1,22 +1,22 @@
-import { Request, Response, NextFunction } from 'express';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import prisma from '../../config/database.js';
-import { AppError } from '../../middleware/errorHandler.js';
-import { AuthRequest } from '../../middleware/auth.js';
+import { Request, Response, NextFunction } from "express";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import prisma from "../../config/database.js";
+import { AppError } from "../../middleware/errorHandler.js";
+import { AuthRequest } from "../../middleware/auth.js";
 
 const generateToken = (id: string, role: string, email: string): string => {
   return jwt.sign(
     { id, role, email },
-    process.env.JWT_SECRET || 'supersecretjwtkeychangeinproduction',
-    { expiresIn: (process.env.JWT_EXPIRE || '24h') as any }
+    process.env.JWT_SECRET || "supersecretjwtkeychangeinproduction",
+    { expiresIn: (process.env.JWT_EXPIRE || "24h") as any },
   );
 };
 
 export const register = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const { name, email, password, role } = req.body;
@@ -27,7 +27,7 @@ export const register = async (
     });
 
     if (existingUser) {
-      return next(new AppError(409, 'User with this email already exists'));
+      return next(new AppError(409, "User with this email already exists"));
     }
 
     // Hash password
@@ -39,7 +39,7 @@ export const register = async (
         name,
         email,
         password: hashedPassword,
-        role: role || 'USER',
+        role: role || "USER",
       },
     });
 
@@ -47,7 +47,7 @@ export const register = async (
     const token = generateToken(user.id, user.role, user.email);
 
     res.status(201).json({
-      status: 'success',
+      status: "success",
       data: {
         token,
         user: {
@@ -67,7 +67,7 @@ export const register = async (
 export const login = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const { email, password } = req.body;
@@ -78,20 +78,20 @@ export const login = async (
     });
 
     if (!user) {
-      return next(new AppError(401, 'Invalid email or password'));
+      return next(new AppError(401, "Invalid email or password"));
     }
 
     // Verify password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return next(new AppError(401, 'Invalid email or password'));
+      return next(new AppError(401, "Invalid email or password"));
     }
 
     // Generate token
     const token = generateToken(user.id, user.role, user.email);
 
     res.status(200).json({
-      status: 'success',
+      status: "success",
       data: {
         token,
         user: {
@@ -111,13 +111,13 @@ export const login = async (
 export const getMe = async (
   req: AuthRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> => {
   try {
     const userId = req.user?.id;
 
     if (!userId) {
-      return next(new AppError(401, 'Not authorized'));
+      return next(new AppError(401, "Not authorized"));
     }
 
     const user = await prisma.user.findUnique({
@@ -133,11 +133,11 @@ export const getMe = async (
     });
 
     if (!user) {
-      return next(new AppError(404, 'User not found'));
+      return next(new AppError(404, "User not found"));
     }
 
     res.status(200).json({
-      status: 'success',
+      status: "success",
       data: {
         user,
       },
