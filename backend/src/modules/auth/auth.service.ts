@@ -24,7 +24,10 @@ export class AuthService {
       });
 
       return {
-        message: "OTP sent successfully",
+        data: {
+          message: "OTP sent successfully",
+          code: 200,
+        },
       };
     } catch (error) {
       console.error("SEND OTP ERROR:", error);

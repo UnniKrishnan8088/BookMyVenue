@@ -10,6 +10,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
+import api from "@/core/api/api"
 
 const emailFormSchema = z.object({
   email: z
@@ -24,7 +25,7 @@ type Props = {
   onSuccess: () => void
 }
 
-export default function EmailForm({onSuccess}: Props) {
+export default function EmailForm({ onSuccess }: Props) {
   const form = useForm<EmailFormValues>({
     resolver: zodResolver(emailFormSchema),
     defaultValues: {
@@ -37,9 +38,15 @@ export default function EmailForm({onSuccess}: Props) {
     formState: { isValid, isSubmitting },
   } = form
 
-  function onSubmit(values: EmailFormValues) {
-    console.log(values) // { email: "user@example.com" }
-   onSuccess()
+  async function onSubmit(values: EmailFormValues) {
+    try {
+      const response = await api.post("auth/send-otp", values)
+      if (response?.data?.code === 200) {
+        onSuccess()
+      }
+    } catch (error) {
+      console.error(error)
+    }
   }
   return (
     <div className="w-full">
