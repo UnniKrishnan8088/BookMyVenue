@@ -7,6 +7,7 @@ import { useState } from "react"
 import SignInModal from "@/auth/components/SignInModal"
 import { useAuth } from "@/core/contexts/authContext"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useLocationContext } from "@/core/contexts/locationContext"
 
 type Props = {
   onLocationOpen: (open: boolean) => void
@@ -16,6 +17,7 @@ type Props = {
 export default function Navbar({ onLocationOpen, onDrawerOpen }: Props) {
   const [isSignIn, setIsSignIn] = useState<boolean>(false)
   const { user } = useAuth()
+  const { location } = useLocationContext()
   return (
     <>
       <nav className="app-container flex items-center justify-between py-2">
@@ -36,15 +38,17 @@ export default function Navbar({ onLocationOpen, onDrawerOpen }: Props) {
         </div>
         <div className="hidden lg:block">
           <div className="flex items-center gap-2">
-            <Button
-              className="flex cursor-pointer items-center gap-2 bg-transparent hover:bg-transparent"
-              variant={"ghost"}
-              size={"sm"}
-              onClick={() => onLocationOpen(true)}
-            >
-              Kochi
-              <ChevronDown />
-            </Button>
+            {location?.features[0]?.properties?.city && (
+              <Button
+                className="flex cursor-pointer items-center gap-2 bg-transparent capitalize hover:bg-transparent"
+                variant={"ghost"}
+                size={"sm"}
+                onClick={() => onLocationOpen(true)}
+              >
+                {location?.features[0]?.properties?.city}
+                <ChevronDown />
+              </Button>
+            )}
             {user?.id ? (
               <>
                 <Avatar className="size-7 cursor-pointer">
