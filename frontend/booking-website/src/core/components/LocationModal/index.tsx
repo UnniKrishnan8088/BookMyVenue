@@ -96,7 +96,7 @@ export default function LocationModal({ onOpenChange, open }: Props) {
   })
 
   const { mutateAsync: getLocationDetails, isPending } = useGetLocationDetails()
-  const { setLocation } = useLocationContext()
+  const { setLocation, location } = useLocationContext()
   const navigate = useNavigate()
 
   async function handlePopularCities({
@@ -118,11 +118,18 @@ export default function LocationModal({ onOpenChange, open }: Props) {
       )
     }
   }
+
+  function handleRestrictModalClose(e: Event) {
+    if (!location) {
+      e.preventDefault()
+    }
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        onInteractOutside={(e) => e.preventDefault()}
-        onEscapeKeyDown={(e) => e.preventDefault()}
+        onInteractOutside={(e) => handleRestrictModalClose(e)}
+        onEscapeKeyDown={(e) => handleRestrictModalClose(e)}
         className="top-16! w-full max-w-[60%]! translate-y-0! p-0 [&>button]:hidden"
       >
         <DialogHeader>
