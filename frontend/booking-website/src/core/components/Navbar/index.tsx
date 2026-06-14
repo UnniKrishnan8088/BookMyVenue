@@ -1,5 +1,6 @@
 import { Link } from "react-router"
 import appLogo from "@/assets/app-logo-v1.png"
+import appLogoV3 from "@/assets/app-logo-v3.jpeg"
 import { Button } from "@/components/ui/button"
 import { ChevronDown, Menu, Search } from "lucide-react"
 import SearchInput from "../SearchInput"
@@ -8,6 +9,7 @@ import SignInModal from "@/auth/components/SignInModal"
 import { useAuth } from "@/core/contexts/authContext"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useLocationContext } from "@/core/contexts/locationContext"
+import { appRoutes } from "@/routes"
 
 type Props = {
   onLocationOpen: (open: boolean) => void
@@ -18,12 +20,16 @@ export default function Navbar({ onLocationOpen, onDrawerOpen }: Props) {
   const [isSignIn, setIsSignIn] = useState<boolean>(false)
   const { user } = useAuth()
   const { location } = useLocationContext()
+
+  const hoomeRoutes = location
+    ? `${appRoutes?.home}/${location?.features[0]?.properties?.city?.toLowerCase()}`
+    : appRoutes?.home
   return (
     <>
       <nav className="app-container flex items-center justify-between py-2">
         <div className="hidden lg:block">
           <div className="flex items-center gap-4">
-            <Link to={"/"} className="h-14 w-28.5">
+            <Link to={hoomeRoutes} className="h-14 w-28.5">
               <img
                 className="h-full w-full"
                 src={appLogo}

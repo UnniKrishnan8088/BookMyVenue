@@ -6,31 +6,92 @@ datasource db {
   provider = "postgresql"
 }
 
+// ─────────────────────────────────────────────
+// ENUMS
+// ─────────────────────────────────────────────
+
 enum Role {
   USER
   OWNER
   ADMIN
 }
 
+enum Provider {
+  LOCAL
+  GOOGLE
+}
+
+enum VenueType {
+  WEDDING_HALL
+  CONFERENCE_HALL
+  BANQUET_HALL
+  EVENT_SPACE
+  OUTDOOR_GARDEN
+  SPORTS_ARENA
+  STUDIO
+}
+
+enum BookingType {
+  HOURLY
+  HALF_DAY
+  FULL_DAY
+  MULTI_DAY
+}
+
+enum SlotStatus {
+  AVAILABLE
+  BOOKED
+  BLOCKED
+  PENDING
+}
+
 enum BookingStatus {
   PENDING
   CONFIRMED
   CANCELLED
+  COMPLETED
+  REFUNDED
 }
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+// ─────────────────────────────────────────────
+// USER
+// ─────────────────────────────────────────────
 
 model User {
-  id         String   @id @default(uuid())
-  email      String   @unique
-  password   String?
+  id         String  @id @default(uuid())
+  email      String  @unique
+  password   String? // null for Google OAuth users
   name       String?
-  role       Role     @default(USER)
-  isVerified Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  role       Role    @default(USER)
+  isVerified Boolean @default(false)
 
-  venues   Venue[]   @relation("UserVenues")
-  bookings Booking[] @relation("UserBookings")
+  // OAuth
+  googleId String?  @unique
+  avatar   String? // profile photo from Google
+  provider Provider @default(LOCAL)
+
+  // Phone (optional, useful for booking notifications)
+  phone String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  venues        Venue[]        @relation("UserVenues")
+  bookings      Booking[]      @relation("UserBookings")
+  refreshTokens RefreshToken[]
+  reviews       Review[]
 }
+
+// ─────────────────────────────────────────────
+// OTP  (unchanged from your original)
+// ─────────────────────────────────────────────
 
 model Otp {
   id        String   @id @default(cuid())
@@ -41,13 +102,44 @@ model Otp {
   createdAt DateTime @default(now())
 }
 
+// ─────────────────────────────────────────────
+// REFRESH TOKEN  (for JWT rotation + logout)
+// ─────────────────────────────────────────────
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ─────────────────────────────────────────────
+// VENUE
+// ─────────────────────────────────────────────
+
 model Venue {
   id          String  @id @default(uuid())
   name        String
   description String?
   address     String
+  city        String
   capacity    Int
-  price       Decimal @db.Decimal(10, 2)
+
+  // Pricing
+  price     Decimal @db.Decimal(10, 2)
+  priceUnit String  @default("per hour") // display label e.g. "per day"
+
+  // Type & booking style
+  venueType   VenueType   @default(EVENT_SPACE)
+  bookingType BookingType @default(HOURLY)
+
+  // Extras
+  amenities String[] @default([]) // ["WiFi", "Parking", "AC", "Catering"]
+  images    String[] @default([]) // Cloudinary URLs
+  isActive  Boolean  @default(true)
 
   ownerId String
   owner   User   @relation("UserVenues", fields: [ownerId], references: [id])
@@ -55,26 +147,45 @@ model Venue {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  slots    Slot[]
-  bookings Booking[]
+  slots     Slot[]
+  bookings  Booking[]
+  reviews   Review[]
+  isDeleted Boolean   @default(false)
 }
 
-model Slot {
-  id String @id @default(uuid())
+// ─────────────────────────────────────────────
+// SLOT
+// ─────────────────────────────────────────────
 
+model Slot {
+  id      String @id @default(uuid())
   venueId String
   venue   Venue  @relation(fields: [venueId], references: [id], onDelete: Cascade)
 
   startTime DateTime
   endTime   DateTime
 
-  isBooked Boolean @default(false)
+  // Pricing — overrides venue.price if set
+  priceOverride Decimal? @db.Decimal(10, 2)
+
+  // Booking type — overrides venue.bookingType if set
+  bookingType BookingType?
+
+  // For MULTI_DAY slots
+  totalDays Int? @default(1)
+
+  // Replaces old isBooked Boolean — more powerful
+  status SlotStatus @default(AVAILABLE)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   bookings Booking[]
 }
+
+// ─────────────────────────────────────────────
+// BOOKING
+// ─────────────────────────────────────────────
 
 model Booking {
   id String @id @default(uuid())
@@ -89,10 +200,57 @@ model Booking {
   slot   Slot   @relation(fields: [slotId], references: [id])
 
   status BookingStatus @default(PENDING)
+  notes  String? // optional message from user
 
   totalPrice Decimal @db.Decimal(10, 2)
-  paymentId  String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  payment Payment?
+}
+
+// ─────────────────────────────────────────────
+// PAYMENT
+// ─────────────────────────────────────────────
+
+model Payment {
+  id String @id @default(uuid())
+
+  bookingId String  @unique
+  booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  // Razorpay IDs
+  razorpayOrderId   String?
+  razorpayPaymentId String?
+  razorpaySignature String?
+
+  amount Decimal       @db.Decimal(10, 2)
+  status PaymentStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─────────────────────────────────────────────
+// REVIEW
+// ─────────────────────────────────────────────
+
+model Review {
+  id String @id @default(uuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  venueId String
+  venue   Venue  @relation(fields: [venueId], references: [id], onDelete: Cascade)
+
+  rating  Int // 1–5
+  comment String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // One review per user per venue
+  @@unique([userId, venueId])
 }

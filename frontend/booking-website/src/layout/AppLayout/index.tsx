@@ -13,8 +13,6 @@ export default function AppLayout({}: Props) {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)
   const location = useLocation()
 
-  console.log(location?.pathname)
-
   useEffect(() => {
     if (location?.pathname === appRoutes.home) {
       setIsLocationOpen(true)
